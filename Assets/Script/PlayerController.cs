@@ -59,7 +59,7 @@ public void OnMove(InputValue value)
         verticalVelocity += gravity * Time.deltaTime;
  
         Vector3 move = transform.forward * moveInput.y + transform.right * moveInput.x;
-float speed = moveSpeed;
+        float speed = moveSpeed;
         float targetZ = -3f;
         if (isRunning)
         {
