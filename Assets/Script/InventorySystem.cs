@@ -3,149 +3,331 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
 
+[System.Serializable]
+public class MaterialDef
+{
+    public string name = "재료";
+    public Color color = Color.white;
+    [Tooltip("비워두면 색만 사용")] public Sprite icon;
+    [Tooltip("맵에 뜨는 아이템 프리팹 (Collider를 Is Trigger로)")] public GameObject worldPrefab;
+    [Tooltip("스폰 비율 (왁스 1 : 점토 2 이면 1과 2)"), Min(0)] public int spawnWeight = 1;
+}
 
-public enum WakpuType { None, A, B, C, D }
+[System.Serializable]
+public class ProductDef
+{
+    public string name = "왁뿌볼";
+    public Color color = Color.green;
+    [Tooltip("비워두면 색만 사용")] public Sprite icon;
+
+    [Tooltip("발사할 총알 프리팹 (Bullet 스크립트가 붙은 것)")] public GameObject bulletPrefab;
+    [Tooltip("이 왁뿌볼의 데미지")] public int damage = 1;
+}
+
+[System.Serializable]
+public class Ingredient
+{
+    [Tooltip("Materials 리스트의 번호 (0부터)")] public int materialIndex;
+    [Min(1)] public int count = 1;
+}
+
+[System.Serializable]
+public class Recipe
+{
+    public string label = "레시피";
+    public List<Ingredient> ingredients = new List<Ingredient>();
+    [Tooltip("Products 리스트의 번호 (0부터)")] public int productIndex;
+}
 
 public class InventorySystem : MonoBehaviour
 {
-    [Header("세로칸 (재료 수집용 4개)")]
+    public static InventorySystem Instance;
+
+    [Header("세로칸 (재료 수집용)")]
     public List<Image> verticalSlots;
 
-    [Header("가로칸 (완성된 왁뿌볼용 4개)")]
+    [Header("가로칸 (완성된 왁뿌볼용)")]
     public List<Image> horizontalSlots;
 
-    [Header("색 지정 (Inspector에서 수정)")]
-    [Tooltip("빈 칸일 때 색")]
+    [Header("빈 칸 색")]
     public Color emptyColor = Color.white;
 
-    [Tooltip("재료 색: 0=A, 1=B, 2=C, 3=D")]
-    public Color[] materialColors = { Color.red, Color.green, Color.blue, Color.magenta };
+    [Header("발사 설정")]
+    [Tooltip("총알이 나가는 위치와 방향 (비우면 Player 태그 오브젝트 사용)")]
+    public Transform firePoint;
+    [Tooltip("발사 위치를 앞쪽으로 얼마나 띄울지")]
+    public float muzzleOffset = 0.5f;
 
-    [Tooltip("완성된 왁뿌볼 색: 0=A, 1=B, 2=C, 3=D")]
-    public Color[] wakpuColors = { Color.red, Color.green, Color.blue, Color.magenta };
 
-    // 상태는 색이 아니라 enum으로 관리
-    private WakpuType[] verticalTypes;    // 세로칸에 모인 재료 종류
-    private WakpuType[] horizontalTypes;  // 가로칸의 왁뿌볼 종류
-    private int currentMaterialCount = 0;
+    [Header("재료 목록 (+ 버튼으로 점토 종류 추가)")]
+    public List<MaterialDef> materials = new List<MaterialDef>
+    {
+        new MaterialDef { name = "왁스", color = Color.yellow, spawnWeight = 1 },
+        new MaterialDef { name = "점토", color = new Color(0.6f, 0.4f, 0.2f), spawnWeight = 2 },
+    };
+
+    [Header("합성 결과 목록 (3개)")]
+    public List<ProductDef> products = new List<ProductDef>
+    {
+        new ProductDef { name = "왁뿌볼 1", color = Color.green },
+        new ProductDef { name = "왁뿌볼 2", color = Color.cyan },
+        new ProductDef { name = "왁뿌볼 3", color = Color.magenta },
+    };
+
+    [Header("레시피 (재료가 모이면 자동 합성)")]
+    public List<Recipe> recipes = new List<Recipe>
+    {
+        new Recipe
+        {
+            label = "왁스1 + 점토2",
+            ingredients = new List<Ingredient>
+            {
+                new Ingredient { materialIndex = 0, count = 1 },
+                new Ingredient { materialIndex = 1, count = 2 },
+            },
+            productIndex = 0
+        }
+    };
+
+    // -1 = 빈 칸, 그 외 = materials / products 리스트의 번호
+    private int[] verticalItems;
+    private int[] horizontalItems;
+    private Sprite[] verticalEmptySprites;
+    private Sprite[] horizontalEmptySprites;
+
+    void Awake() { Instance = this; }
 
     void Start()
     {
-        verticalTypes = new WakpuType[verticalSlots.Count];
-        horizontalTypes = new WakpuType[horizontalSlots.Count];
+        verticalItems = NewEmptyArray(verticalSlots.Count);
+        horizontalItems = NewEmptyArray(horizontalSlots.Count);
+
+        // 슬롯 원래 스프라이트를 저장해서 빈 칸일 때 복원
+        verticalEmptySprites = new Sprite[verticalSlots.Count];
+        for (int i = 0; i < verticalSlots.Count; i++) verticalEmptySprites[i] = verticalSlots[i].sprite;
+        horizontalEmptySprites = new Sprite[horizontalSlots.Count];
+        for (int i = 0; i < horizontalSlots.Count; i++) horizontalEmptySprites[i] = horizontalSlots[i].sprite;
+
+        if (firePoint == null)
+        {
+            GameObject player = GameObject.FindWithTag("Player");
+            if (player != null) firePoint = player.transform;
+        }
+
         RefreshUI();
+    }
+
+    int[] NewEmptyArray(int size)
+    {
+        int[] arr = new int[size];
+        for (int i = 0; i < size; i++) arr[i] = -1;
+        return arr;
     }
 
     void Update()
     {
-        if (Keyboard.current == null) return;
-
-        // 1~4키: 재료 A~D 획득
-        if (Keyboard.current.digit1Key.wasPressedThisFrame) AcquireMaterial(WakpuType.A);
-        if (Keyboard.current.digit2Key.wasPressedThisFrame) AcquireMaterial(WakpuType.B);
-        if (Keyboard.current.digit3Key.wasPressedThisFrame) AcquireMaterial(WakpuType.C);
-        if (Keyboard.current.digit4Key.wasPressedThisFrame) AcquireMaterial(WakpuType.D);
-
-        // F키: 첫 번째 칸 왁뿌볼 발사
-        if (Keyboard.current.fKey.wasPressedThisFrame) AttackWithWakpuBall();
+        if (Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame)
+            AttackWithWakpuBall();
     }
 
-    public void AcquireMaterial(WakpuType type)
+    // 아이템 획득. 성공하면 true (칸이 가득 차면 false -> 아이템은 맵에 남음)
+    public bool AcquireMaterial(int materialIndex)
     {
-        if (currentMaterialCount >= verticalSlots.Count)
-        {
-            Debug.Log("세로칸이 가득 찼습니다!");
-            return;
-        }
+        if (materialIndex < 0 || materialIndex >= materials.Count) return false;
 
-        verticalTypes[currentMaterialCount] = type;
-        currentMaterialCount++;
+        List<int> pool = GetPool();     // 현재 세로칸 재료를 복사
+        pool.Add(materialIndex);        // 새 재료를 맨 뒤(가장 최근)에 추가
+
+        // 합성 가능한 만큼 합성 (가로칸 빈 자리 수까지만)
+        List<int> made = new List<int>();
+        CraftAll(pool, made, EmptyCount(horizontalItems));
+
+        // 합성 후에도 세로칸 칸 수를 넘으면 못 먹음 (예: 점토 4개 + 점토)
+        if (pool.Count > verticalItems.Length) return false;
+
+        CommitPool(pool, made);
+        Debug.Log($"{materials[materialIndex].name} 획득!");
         RefreshUI();
-        Debug.Log($"재료 {type} 획득! ({currentMaterialCount}/{verticalSlots.Count})");
-
-        if (currentMaterialCount >= verticalSlots.Count)
-            AutoCraft();
+        return true;
     }
 
-    void AutoCraft()
-    {
-        WakpuType result = DecideCraftResult();
-
-        // 세로칸 비우기
-        for (int i = 0; i < verticalTypes.Length; i++)
-            verticalTypes[i] = WakpuType.None;
-        currentMaterialCount = 0;
-
-        // 가로칸의 첫 빈 칸에 배치
-        for (int i = 0; i < horizontalTypes.Length; i++)
+   
+        void TryAutoCraft()
         {
-            if (horizontalTypes[i] == WakpuType.None)
-            {
-                horizontalTypes[i] = result;
-                Debug.Log($"{result} 왁뿌볼 합성 완료! {i + 1}번 가로칸에 배치되었습니다.");
-                RefreshUI();
-                return;
-            }
+            List<int> pool = GetPool();
+            List<int> made = new List<int>();
+            CraftAll(pool, made, EmptyCount(horizontalItems));
+            CommitPool(pool, made);
+            RefreshUI();
         }
-
-        Debug.Log("가로칸이 가득 차서 왁뿌볼을 보관할 수 없습니다!");
-        RefreshUI();
+    List<int> GetPool()
+    {
+        List<int> pool = new List<int>();
+        foreach (int item in verticalItems)
+            if (item >= 0) pool.Add(item);
+        return pool;
     }
 
-    // 합성 규칙: 가장 많이 모인 재료 종류 (동점이면 먼저 모은 재료 쪽)
-    WakpuType DecideCraftResult()
+    // pool에서 합성 가능한 만큼 합성해 made에 결과를 쌓음
+    void CraftAll(List<int> pool, List<int> made, int maxProducts)
     {
-        WakpuType best = verticalTypes[0];
-        int bestCount = 0;
-
-        for (int i = 0; i < verticalTypes.Length; i++)
+        while (made.Count < maxProducts)
         {
-            int count = 0;
-            for (int j = 0; j < verticalTypes.Length; j++)
-                if (verticalTypes[j] == verticalTypes[i]) count++;
+            Recipe best = null;
+            List<int> bestIndices = null;
+            int bestScore = -1;
 
-            if (count > bestCount) // 엄격하게 큰 경우만 교체 -> 동점이면 먼저 모은 쪽 유지
+            foreach (Recipe r in recipes)
             {
-                bestCount = count;
-                best = verticalTypes[i];
+                List<int> indices = FindConsumeIndices(pool, r);
+                if (indices == null) continue;
+
+                // 점수 = 소모할 재료 중 가장 오래된 것의 위치. 클수록 최근에 먹은 재료끼리 합성
+                int score = int.MaxValue;
+                foreach (int idx in indices) if (idx < score) score = idx;
+
+                if (score > bestScore) // 동점이면 먼저 적힌 레시피 유지
+                {
+                    bestScore = score;
+                    best = r;
+                    bestIndices = indices;
+                }
             }
+
+            if (best == null) break; // 더 합성할 게 없음
+
+            // 뒤에서부터 지워야 앞쪽 위치가 밀리지 않음
+            bestIndices.Sort();
+            for (int i = bestIndices.Count - 1; i >= 0; i--)
+                pool.RemoveAt(bestIndices[i]);
+
+            made.Add(best.productIndex);
         }
-        return best;
+    }
+    //레시피에 필요한 재료 위치를 최근 것부터 골라 반환 (부족하면 null)
+    List<int> FindConsumeIndices(List<int> pool, Recipe r)
+    {
+        if (r.ingredients.Count == 0) return null;
+        if (r.productIndex < 0 || r.productIndex >= products.Count) return null;
+
+        List<int> used = new List<int>();
+        foreach (Ingredient ing in r.ingredients)
+        {
+            int found = 0;
+            for (int i = pool.Count - 1; i >= 0 && found < ing.count; i--) // 뒤(최근)부터 검색
+            {
+                if (pool[i] == ing.materialIndex && !used.Contains(i))
+                {
+                    used.Add(i);
+                    found++;
+                }
+            }
+            if (found < ing.count) return null;
+        }
+        return used;
+    }
+
+    // 계산이 끝난 pool과 결과를 실제 칸에 반영
+    void CommitPool(List<int> pool, List<int> made)
+    {
+        for (int i = 0; i < verticalItems.Length; i++)
+            verticalItems[i] = i < pool.Count ? pool[i] : -1;
+
+        foreach (int productIndex in made)
+        {
+            int slot = FirstEmpty(horizontalItems);
+            if (slot < 0) break;
+            horizontalItems[slot] = productIndex;
+            Debug.Log($"합성 완료: {products[productIndex].name}");
+        }
+    }
+
+    // 빈 칸 개수
+    int EmptyCount(int[] arr)
+    {
+        int count = 0;
+        foreach (int item in arr) if (item < 0) count++;
+        return count;
     }
 
     void AttackWithWakpuBall()
     {
-        if (horizontalTypes[0] == WakpuType.None)
+        if (horizontalItems[0] < 0)
         {
             Debug.Log("발사할 왁뿌볼이 없습니다!");
             return;
         }
 
-        WakpuType fired = horizontalTypes[0];
-        Debug.Log($"{fired} 왁뿌볼 발사!"); // 종류별 공격은 여기서 switch (fired)로 분기
+        ProductDef product = products[horizontalItems[0]];
+
+        // 총알을 못 쏘는 상태면 왁뿌볼을 소모하지 않고 중단
+        if (!FireBullet(product)) return;
 
         // 한 칸씩 앞으로 당기기
-        for (int i = 0; i < horizontalTypes.Length - 1; i++)
-            horizontalTypes[i] = horizontalTypes[i + 1];
-        horizontalTypes[horizontalTypes.Length - 1] = WakpuType.None;
+        for (int i = 0; i < horizontalItems.Length - 1; i++)
+            horizontalItems[i] = horizontalItems[i + 1];
+        horizontalItems[horizontalItems.Length - 1] = -1;
 
-        RefreshUI();
+        TryAutoCraft(); // 가로칸이 비었으니 보류된 합성 재시도
     }
 
-    // 상태(enum)를 읽어서 색만 칠해 주는 함수
+    // 총알 생성 후 발사. 성공하면 true
+    bool FireBullet(ProductDef product)
+    {
+        if (product.bulletPrefab == null)
+        {
+            Debug.LogWarning($"{product.name}의 Bullet Prefab이 비어 있습니다.");
+            return false;
+        }
+        if (firePoint == null)
+        {
+            Debug.LogWarning("Fire Point가 없습니다. Player 태그나 Fire Point를 설정하세요.");
+            return false;
+        }
+
+        Vector3 pos = firePoint.position + firePoint.forward * muzzleOffset;
+        GameObject go = Instantiate(product.bulletPrefab, pos, firePoint.rotation);
+
+        Bullet bullet = go.GetComponent<Bullet>();
+        if (bullet != null) bullet.Launch(firePoint.forward, product.damage);
+
+        Debug.Log($"{product.name} 발사! (데미지 {product.damage})");
+        return true;
+    }
+
+    int FirstEmpty(int[] arr)
+    {
+        for (int i = 0; i < arr.Length; i++) if (arr[i] < 0) return i;
+        return -1;
+    }
+
+    // 상태를 읽어서 화면만 갱신
     void RefreshUI()
     {
         for (int i = 0; i < verticalSlots.Count; i++)
-            verticalSlots[i].color = GetColor(verticalTypes[i], materialColors);
+        {
+            int idx = verticalItems[i];
+            if (idx < 0) ApplyEmpty(verticalSlots[i], verticalEmptySprites[i]);
+            else Apply(verticalSlots[i], materials[idx].icon, materials[idx].color);
+        }
 
         for (int i = 0; i < horizontalSlots.Count; i++)
-            horizontalSlots[i].color = GetColor(horizontalTypes[i], wakpuColors);
+        {
+            int idx = horizontalItems[i];
+            if (idx < 0) ApplyEmpty(horizontalSlots[i], horizontalEmptySprites[i]);
+            else Apply(horizontalSlots[i], products[idx].icon, products[idx].color);
+        }
     }
 
-    Color GetColor(WakpuType type, Color[] palette)
+    void Apply(Image img, Sprite icon, Color color)
     {
-        int index = (int)type - 1; // None(0)은 제외, A=0, B=1 ...
-        if (index < 0 || index >= palette.Length) return emptyColor;
-        return palette[index];
+        if (icon != null) { img.sprite = icon; img.color = Color.white; }
+        else img.color = color;
+    }
+
+    void ApplyEmpty(Image img, Sprite originalSprite)
+    {
+        img.sprite = originalSprite;
+        img.color = emptyColor;
     }
 }
