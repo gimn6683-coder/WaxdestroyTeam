@@ -1,43 +1,30 @@
 using UnityEngine;
-using UnityEngine.UI;
- 
+using System;
+
 public class Health : MonoBehaviour
 {
     public int maxHp = 3;
-    public int currentHp;
-    public Slider hpSlider;      // 플레이어만 연결
- 
-    void Start()
+    [Tooltip("체력이 0이 되면 오브젝트 삭제 (적은 켜고, 프로텍트 오브젝트는 끄세요)")]
+    public bool destroyOnDeath = true;
+
+    public int CurrentHp { get; private set; }
+
+    public event Action<int, int> OnHpChanged; // (현재 체력, 최대 체력)
+    public event Action OnDied;                // 체력이 0이 됐을 때 (게임 오버 연결용)
+
+    void Awake() { CurrentHp = maxHp; }
+
+    public void TakeDamage(int amount)
     {
-        currentHp = maxHp;
-        UpdateBar();
-    }
-public void TakeDamage(int damage)
-    {
-        if (currentHp <= 0) return;   // 이미 죽었으면 무시
- 
-        currentHp -= damage;
-        Debug.Log(name + " HP: " + currentHp);
-        UpdateBar();
- 
-        if (currentHp <= 0) Die();
-    }
-void UpdateBar()
-    {
-        if (hpSlider != null)
-            hpSlider.value = (float)currentHp / maxHp;
-    }
- 
-    void Die()
-    {
-        if (CompareTag("Player"))
+        if (CurrentHp <= 0) return;
+
+        CurrentHp = Mathf.Max(0, CurrentHp - amount);
+        OnHpChanged?.Invoke(CurrentHp, maxHp);
+
+        if (CurrentHp <= 0)
         {
-            Debug.Log("게임 오버");
-            Time.timeScale = 0f;      // 게임 정지
-        }
-        else
-        {
-            Destroy(gameObject);
+            OnDied?.Invoke();
+            if (destroyOnDeath) Destroy(gameObject);
         }
     }
 }

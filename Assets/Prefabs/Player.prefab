@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8161406556808802052}
   - component: {fileID: 6825623083778433307}
-  - component: {fileID: 5891017226980926263}
   - component: {fileID: 1325794000704854580}
   m_Layer: 0
   m_Name: Player
@@ -54,21 +53,6 @@ MonoBehaviour:
   mouseSensitivity: 0.2
   cameraPivot: {fileID: 1753184413507313682}
   cameraTransform: {fileID: 7353473644564148210}
---- !u!114 &5891017226980926263
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 337636496687569076}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 626b37d20540bc7489f1d33a968620e8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Health
-  maxHp: 10
-  currentHp: 0
-  hpSlider: {fileID: 0}
 --- !u!114 &1325794000704854580
 MonoBehaviour:
   m_ObjectHideFlags: 0
