@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4174356749013691990}
   - component: {fileID: 1669180362800802360}
   - component: {fileID: 8445254471759021916}
-  - component: {fileID: 4422984806638774721}
+  - component: {fileID: 5111930537837335240}
   m_Layer: 0
   m_Name: WaxBulletpink
   m_TagString: Untagged
@@ -138,8 +138,8 @@ MonoBehaviour:
   lifeTime: 2
   targetTag: Enemy
   ownerTag: Player
---- !u!136 &4422984806638774721
-CapsuleCollider:
+--- !u!135 &5111930537837335240
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -153,13 +153,11 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
+  serializedVersion: 3
   m_Radius: 0.5
-  m_Height: 1
-  m_Direction: 1
   m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!1001 &312966871632044221
 PrefabInstance:

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5158350438514688129}
   - component: {fileID: 326636929275102499}
   - component: {fileID: 987479353492013058}
+  - component: {fileID: -567132832351317932}
   m_Layer: 0
   m_Name: WaxBulletgreen
   m_TagString: Untagged
@@ -137,6 +138,27 @@ MonoBehaviour:
   lifeTime: 2
   targetTag: Enemy
   ownerTag: Player
+--- !u!135 &-567132832351317932
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7858469070483230619}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!1001 &2033196589689226854
 PrefabInstance:
   m_ObjectHideFlags: 0
