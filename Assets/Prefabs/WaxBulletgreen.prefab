@@ -16,9 +16,9 @@ GameObject:
   - component: {fileID: -567132832351317932}
   - component: {fileID: 298720344303839574}
   - component: {fileID: 2412418969671005976}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: WaxBulletgreen
-  m_TagString: Untagged
+  m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -136,7 +136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bullet
   damage: 1
-  speed: 15
+  speed: 40
   lifeTime: 2
   targetTag: Enemy
   ownerTag: Player
@@ -271,6 +271,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaxBallAudio
   breakSound: {fileID: 8300000, guid: 9ee7a7936a6fed2498fa37b69bb3595e, type: 3}
+  volume: 1
+  play2D: 1
+  ownerTag: Player
+  destroyOnHit: 0
+  debugLog: 1
 --- !u!1001 &2033196589689226854
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -335,6 +340,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: waxGreen
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e23ff495c827d224ea5426843c6e8f0e, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 1151388028547126963, guid: e23ff495c827d224ea5426843c6e8f0e, type: 3}
       propertyPath: m_LocalScale.x
       value: 1
@@ -346,6 +355,10 @@ PrefabInstance:
     - target: {fileID: 1151388028547126963, guid: e23ff495c827d224ea5426843c6e8f0e, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8164078558771037576, guid: e23ff495c827d224ea5426843c6e8f0e, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -14,15 +14,13 @@ public class EnemySpawner : MonoBehaviour
     public float rayStartHeight = 50f;
     [Tooltip("레이가 내려가는 최대 거리")]
     public float rayDistance = 200f;
-    [Tooltip("바닥 위로 띄울 높이. 피벗이 발 밑이면 0, 몸 중앙이면 키의 절반 정도")]
-    public float spawnHeightOffset = 0.5f;
-    [Tooltip("바닥으로 취급할 레이어 (기본: 전부)")]
+    [Tooltip("바닥 위로 띄울 높이. 떠다니는 적은 알아서 높이를 맞추니 1 정도면 충분")]
+    public float spawnHeightOffset = 1f;
+    [Tooltip("바닥으로 취급할 레이어 (맵 바닥과 블록만 Ground로 지정)")]
     public LayerMask groundMask = ~0;
 
-
-
-
     float timer;
+
     void Update()
     {
         timer += Time.deltaTime;
@@ -30,7 +28,6 @@ public class EnemySpawner : MonoBehaviour
         timer = 0f;
 
         if (enemyPrefabs.Length == 0 || spawnPoints.Length == 0) return;
-
 
         int alive = GameObject.FindGameObjectsWithTag("Enemy").Length;
         if (alive >= maxAlive) return;
@@ -50,11 +47,11 @@ public class EnemySpawner : MonoBehaviour
 
         Vector3 pos = spawnPoints[s].position;
         if (snapToGround) pos = FindGroundPosition(pos);
-       
+
         Instantiate(enemyPrefabs[e], pos, Quaternion.identity);
     }
 
-  Vector3 FindGroundPosition(Vector3 point)
+    Vector3 FindGroundPosition(Vector3 point)
     {
         Vector3 origin = point + Vector3.up * rayStartHeight;
 
@@ -68,4 +65,3 @@ public class EnemySpawner : MonoBehaviour
         return point;   // 못 찾으면 원래 위치 사용
     }
 }
-

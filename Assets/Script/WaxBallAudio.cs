@@ -14,30 +14,32 @@ public class WaxBallAudio : MonoBehaviour
     [Tooltip("이 태그에 닿으면 소리를 내지 않음 (쏜 플레이어)")]
     public string ownerTag = "Player";
 
+    [Tooltip("이 레이어에 닿으면 소리를 내지 않음 (맵 바닥과 블록). 비워 두면 'Ground' 레이어를 자동으로 사용")]
+    public LayerMask ignoreLayers;
+
     [Tooltip("Bullet 스크립트가 이미 총알을 삭제하므로 보통 끄세요")]
     public bool destroyOnHit = false;
 
-    [Tooltip("켜면 Console에 재생 여부를 출력 (원인을 찾은 뒤 끄세요)")]
-    public bool debugLog = true;
-
     private bool played;   // 한 번만 재생
+
+    void Start()
+    {
+        if (ignoreLayers.value == 0)
+        {
+            int g = LayerMask.NameToLayer("Ground");
+            if (g >= 0) ignoreLayers = 1 << g;
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.isTrigger) return;              // 아이템 같은 트리거는 통과
-        if (other.CompareTag(ownerTag)) return;   // 쏜 플레이어는 통과
+        if (other.isTrigger) return;                                             // 아이템 같은 트리거는 통과
+        if ((ignoreLayers.value & (1 << other.gameObject.layer)) != 0) return;   // 맵은 통과
+        if (other.CompareTag(ownerTag)) return;                                  // 쏜 플레이어는 통과
         if (played) return;
         played = true;
 
-        if (breakSound == null)
-        {
-            Debug.LogWarning("[WaxBallAudio] Break Sound가 비어 있습니다. 오디오 파일을 연결하세요.");
-        }
-        else
-        {
-            PlaySound();
-            if (debugLog) Debug.Log($"[WaxBallAudio] 소리 재생: {other.name} 에 닿음");
-        }
+        if (breakSound != null) PlaySound();
 
         if (destroyOnHit) Destroy(gameObject);
     }
@@ -56,8 +58,8 @@ public class WaxBallAudio : MonoBehaviour
         AudioSource src = go.AddComponent<AudioSource>();
         src.clip = breakSound;
         src.volume = volume;
-        src.spatialBlend = 0f;                       // 0 = 2D
+        src.spatialBlend = 0f;
         src.Play();
-        Destroy(go, breakSound.length + 0.1f);       // 소리가 끝나면 정리
+        Destroy(go, breakSound.length + 0.1f);
     }
 }

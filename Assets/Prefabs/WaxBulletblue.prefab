@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6027261178942604435}
   - component: {fileID: 4560431298076372125}
   - component: {fileID: 154578627191678074}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: default
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,9 +106,9 @@ GameObject:
   - component: {fileID: 8834616414280205118}
   - component: {fileID: 7802503467341696780}
   - component: {fileID: 1927481148034087190}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: WaxBulletblue
-  m_TagString: Untagged
+  m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -226,7 +226,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bullet
   damage: 1
-  speed: 15
+  speed: 40
   lifeTime: 2
   targetTag: Enemy
   ownerTag: Player
@@ -361,6 +361,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaxBallAudio
   breakSound: {fileID: 8300000, guid: 9ee7a7936a6fed2498fa37b69bb3595e, type: 3}
+  volume: 1
+  play2D: 1
+  ownerTag: Player
+  destroyOnHit: 0
+  debugLog: 1
 --- !u!1 &6922979784844625355
 GameObject:
   m_ObjectHideFlags: 0
@@ -370,7 +375,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6036039083407376725}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: waxBlue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
