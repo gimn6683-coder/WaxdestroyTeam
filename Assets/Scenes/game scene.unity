@@ -1521,8 +1521,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6ebf5b71a1190c46bd29544ef59e478, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaveSpawner
-  enemyPrefabs: []
-  spawnPoints: []
+  enemyPrefabs:
+  - {fileID: 5669467700513922216, guid: 06156b9437fe2614c9450fcdba030252, type: 3}
+  - {fileID: 5669467700513922216, guid: 194a7a9b6c0b73640a4fc3f02fb51a36, type: 3}
+  - {fileID: 5669467700513922216, guid: 194a7a9b6c0b73640a4fc3f02fb51a36, type: 3}
+  spawnPoints:
+  - {fileID: 1889431698}
+  - {fileID: 1794118785}
+  - {fileID: 1297620507}
+  - {fileID: 1190851125}
   firstCount: 3
   addPerWave: 2
   spawnGap: 0.5
