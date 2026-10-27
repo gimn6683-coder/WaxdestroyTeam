@@ -140,6 +140,9 @@ MonoBehaviour:
   lifeTime: 2
   targetTag: Enemy
   ownerTag: Player
+  ignoreLayers:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!135 &-567132832351317932
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -170,7 +173,7 @@ AudioSource:
   m_GameObject: {fileID: 7858469070483230619}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -9136325493841577151, guid: e279b64e20f5249419eb82fb365a47b7, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
@@ -274,8 +277,10 @@ MonoBehaviour:
   volume: 1
   play2D: 1
   ownerTag: Player
+  ignoreLayers:
+    serializedVersion: 2
+    m_Bits: 0
   destroyOnHit: 0
-  debugLog: 1
 --- !u!1001 &2033196589689226854
 PrefabInstance:
   m_ObjectHideFlags: 0
