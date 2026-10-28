@@ -58,7 +58,6 @@ public class InventorySystem : MonoBehaviour
     [Tooltip("발사 위치를 앞쪽으로 얼마나 띄울지")]
     public float muzzleOffset = 0.5f;
 
-
     [Header("재료 목록 (+ 버튼으로 점토 종류 추가)")]
     public List<MaterialDef> materials = new List<MaterialDef>
     {
@@ -146,20 +145,22 @@ public class InventorySystem : MonoBehaviour
         if (pool.Count > verticalItems.Length) return false;
 
         CommitPool(pool, made);
-        Debug.Log($"{materials[materialIndex].name} 획득!");
+
+        ScreenMessage.Show($"{materials[materialIndex].name} 획득!");
+
         RefreshUI();
         return true;
     }
 
-   
-        void TryAutoCraft()
-        {
-            List<int> pool = GetPool();
-            List<int> made = new List<int>();
-            CraftAll(pool, made, EmptyCount(horizontalItems));
-            CommitPool(pool, made);
-            RefreshUI();
-        }
+    void TryAutoCraft()
+    {
+        List<int> pool = GetPool();
+        List<int> made = new List<int>();
+        CraftAll(pool, made, EmptyCount(horizontalItems));
+        CommitPool(pool, made);
+        RefreshUI();
+    }
+
     List<int> GetPool()
     {
         List<int> pool = new List<int>();
@@ -204,7 +205,8 @@ public class InventorySystem : MonoBehaviour
             made.Add(best.productIndex);
         }
     }
-    //레시피에 필요한 재료 위치를 최근 것부터 골라 반환 (부족하면 null)
+
+    // 레시피에 필요한 재료 위치를 최근 것부터 골라 반환 (부족하면 null)
     List<int> FindConsumeIndices(List<int> pool, Recipe r)
     {
         if (r.ingredients.Count == 0) return null;
@@ -238,7 +240,6 @@ public class InventorySystem : MonoBehaviour
             int slot = FirstEmpty(horizontalItems);
             if (slot < 0) break;
             horizontalItems[slot] = productIndex;
-            Debug.Log($"합성 완료: {products[productIndex].name}");
         }
     }
 
@@ -254,7 +255,7 @@ public class InventorySystem : MonoBehaviour
     {
         if (horizontalItems[0] < 0)
         {
-            Debug.Log("발사할 왁뿌볼이 없습니다!");
+            ScreenMessage.Show("발사할 왁뿌볼이 없습니다!");
             return;
         }
 
@@ -274,6 +275,7 @@ public class InventorySystem : MonoBehaviour
     // 총알 생성 후 발사. 성공하면 true
     bool FireBullet(ProductDef product)
     {
+
         if (product.bulletPrefab == null)
         {
             Debug.LogWarning($"{product.name}의 Bullet Prefab이 비어 있습니다.");
@@ -291,7 +293,6 @@ public class InventorySystem : MonoBehaviour
         Bullet bullet = go.GetComponent<Bullet>();
         if (bullet != null) bullet.Launch(firePoint.forward, product.damage);
 
-        Debug.Log($"{product.name} 발사! (데미지 {product.damage})");
         return true;
     }
 

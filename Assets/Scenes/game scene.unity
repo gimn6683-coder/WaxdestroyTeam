@@ -379,17 +379,17 @@ MonoBehaviour:
   - name: "\uC810\uD1A0\uBD84\uD64D"
     color: {r: 0.8792453, g: 0.55574936, b: 0.8390477, a: 1}
     icon: {fileID: -3986032102361523375, guid: 479e07207bff4e74a845d805c794fdec, type: 3}
-    worldPrefab: {fileID: 2641712394688029313, guid: 030226e4088c03b4ab83f55ecd6131cf, type: 3}
+    worldPrefab: {fileID: 6686605143954926358, guid: 2bc3cc4ad2e24e446b206c5b3a37197c, type: 3}
     spawnWeight: 1
   - name: "\uC810\uD1A0\uCD08\uB85D"
     color: {r: 0.64188766, g: 0.90188676, b: 0.48838016, a: 1}
     icon: {fileID: 6670268070335484518, guid: 616fdfa115270e3429700f201fc8be1e, type: 3}
-    worldPrefab: {fileID: 7032558002340149432, guid: 896ae04796899114b986010036b3855c, type: 3}
+    worldPrefab: {fileID: 201228590124415076, guid: 04155d907eb227d4fb899f88052c7cde, type: 3}
     spawnWeight: 1
   - name: "\uC810\uD1A0\uD30C\uB791"
     color: {r: 0.42666423, g: 0.49398902, b: 0.8867924, a: 1}
     icon: {fileID: 5928108313984521670, guid: a756f50fcf70b3541a6b81861994cbba, type: 3}
-    worldPrefab: {fileID: 5604051640775023806, guid: 2ff3daaf06ea2384699171c1e17f07ba, type: 3}
+    worldPrefab: {fileID: 1587640333330823365, guid: 136c84eb13f8bb343b6b1205d478b220, type: 3}
     spawnWeight: 1
   products:
   - name: "\uC641\uBFCC\uBCFC\uBD84\uD64D"
@@ -1524,7 +1524,6 @@ MonoBehaviour:
   enemyPrefabs:
   - {fileID: 5669467700513922216, guid: 06156b9437fe2614c9450fcdba030252, type: 3}
   - {fileID: 5669467700513922216, guid: 194a7a9b6c0b73640a4fc3f02fb51a36, type: 3}
-  - {fileID: 5669467700513922216, guid: 194a7a9b6c0b73640a4fc3f02fb51a36, type: 3}
   spawnPoints:
   - {fileID: 1889431698}
   - {fileID: 1794118785}
@@ -1532,7 +1531,7 @@ MonoBehaviour:
   - {fileID: 1190851125}
   firstCount: 3
   addPerWave: 2
-  spawnGap: 0.5
+  spawnGap: 0.3
   waveText: {fileID: 0}
 --- !u!1 &1947726907 stripped
 GameObject:
