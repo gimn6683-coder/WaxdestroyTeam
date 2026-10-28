@@ -7,6 +7,10 @@ public class UIManager : MonoBehaviour
 {
     public GameObject SettingPanel;
 
+
+    public string gameSceneName = "game scene";
+    public string titleSceneName = "TitleScene";
+
     public void OpenHelpPanel()
     {
         SettingPanel.SetActive(true);
@@ -16,24 +20,39 @@ public class UIManager : MonoBehaviour
     {
         SettingPanel.SetActive(false);
     }
+
     public void StartButtonAction()
     {
-        SceneManager.LoadScene("game scene");
+        SceneManager.LoadScene(gameSceneName);
     }
+
+
+    public void RestartButtonAction()
+    {
+        Time.timeScale = 1f;   // 게임오버 때 멈춰 둔 시간을 되돌림
+        SceneManager.LoadScene(gameSceneName);
+    }
+
+
+    public void TitleButtonAction()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(titleSceneName);
+    }
+
     public void QuitButtonAction()
     {
         Application.Quit();
         Debug.Log("게임 종료");
     }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     void Start()
     {
-        
+
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

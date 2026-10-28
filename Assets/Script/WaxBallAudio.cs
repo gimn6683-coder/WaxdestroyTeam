@@ -33,6 +33,7 @@ public class WaxBallAudio : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+
         if (other.isTrigger) return;                                             // 아이템 같은 트리거는 통과
         if ((ignoreLayers.value & (1 << other.gameObject.layer)) != 0) return;   // 맵은 통과
         if (other.CompareTag(ownerTag)) return;                                  // 쏜 플레이어는 통과
