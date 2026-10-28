@@ -228,7 +228,7 @@ MonoBehaviour:
   - name: "\uC641\uC2A4"
     color: {r: 0.79622644, g: 0.7857102, b: 0.7857102, a: 1}
     icon: {fileID: -820806601351734324, guid: ffd4b97903017a3438c481ab9221fa47, type: 3}
-    worldPrefab: {fileID: 7554020689245784797, guid: 5ee9201abd8ec0d4fafc4cc2dd0366c9, type: 3}
+    worldPrefab: {fileID: 5196737658208408657, guid: cfaebd0b27761ed49906b1f31918103a, type: 3}
     spawnWeight: 2
   - name: "\uC810\uD1A0\uBD84\uD64D"
     color: {r: 0.8792453, g: 0.55574936, b: 0.8390477, a: 1}
