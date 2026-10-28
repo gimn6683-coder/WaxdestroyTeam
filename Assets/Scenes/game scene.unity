@@ -379,17 +379,17 @@ MonoBehaviour:
   - name: "\uC810\uD1A0\uBD84\uD64D"
     color: {r: 0.8792453, g: 0.55574936, b: 0.8390477, a: 1}
     icon: {fileID: -3986032102361523375, guid: 479e07207bff4e74a845d805c794fdec, type: 3}
-    worldPrefab: {fileID: 6686605143954926358, guid: 2bc3cc4ad2e24e446b206c5b3a37197c, type: 3}
+    worldPrefab: {fileID: 7575587767719688605, guid: ac8180978c9fdb74485e1d8433a4106e, type: 3}
     spawnWeight: 1
   - name: "\uC810\uD1A0\uCD08\uB85D"
     color: {r: 0.64188766, g: 0.90188676, b: 0.48838016, a: 1}
     icon: {fileID: 6670268070335484518, guid: 616fdfa115270e3429700f201fc8be1e, type: 3}
-    worldPrefab: {fileID: 201228590124415076, guid: 04155d907eb227d4fb899f88052c7cde, type: 3}
+    worldPrefab: {fileID: 1595040921110971186, guid: 32b259aeac168a84b8b5d64f5e18e637, type: 3}
     spawnWeight: 1
   - name: "\uC810\uD1A0\uD30C\uB791"
     color: {r: 0.42666423, g: 0.49398902, b: 0.8867924, a: 1}
     icon: {fileID: 5928108313984521670, guid: a756f50fcf70b3541a6b81861994cbba, type: 3}
-    worldPrefab: {fileID: 1587640333330823365, guid: 136c84eb13f8bb343b6b1205d478b220, type: 3}
+    worldPrefab: {fileID: 1116843378406860777, guid: 13f97317c9dfb4843a331f68af04bd36, type: 3}
     spawnWeight: 1
   products:
   - name: "\uC641\uBFCC\uBCFC\uBD84\uD64D"
